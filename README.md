@@ -36,12 +36,11 @@ src/
   lib/                    pricing and cart logic, with unit tests
   styles/                 design tokens and global CSS
 public/assets/            icons, food and ingredient images
-design/                   original design handoff (prototype, spec, design-system bundle)
 ```
 
 ## Design reference
 
-`design/HANDOFF.md` is the design spec. `design/Empty Cart (standalone).html` is the original prototype and opens directly in a browser. (`Empty Cart.dc.html` is its source; it expects the images in `design/assets/`, which now live in `public/assets/`.) The app was checked against it screenshot-by-screenshot.
+The app was built from an HTML prototype and design spec, and checked against the prototype screenshot-by-screenshot. Those files were removed from the repo to keep it light; they are still in the git history at commit `edef0f3` (`git show edef0f3:README.md` shows the spec).
 
 Where the app intentionally differs from the prototype:
 
