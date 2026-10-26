@@ -1,8 +1,0 @@
-/* Happy — minimal element defaults. Components carry their own styling; this
-   only sets the page ground so nothing renders in browser defaults. */
-:root{color-scheme:light}
-body{margin:0;background:var(--white);color:var(--grey-900);font-family:var(--font-body);font-size:var(--text-sm);line-height:var(--leading-5);-webkit-font-smoothing:antialiased}
-a{color:var(--primary-500);text-decoration:none}
-a:hover{color:var(--primary-600);text-decoration:underline}
-*,*::before,*::after{box-sizing:border-box}
-input::placeholder,textarea::placeholder{color:var(--grey-400);-webkit-text-fill-color:var(--grey-400);opacity:1}
