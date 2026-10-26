@@ -1,0 +1,5 @@
+/* Happy ships no font binaries in the source file. Inter is the sole UI family
+   (text-font-body and text-font-heading both resolve to "Inter"), loaded here
+   from Google Fonts. Drop real .woff2 files into assets/fonts/ and replace this
+   @import with local @font-face rules if self-hosting is required. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
