@@ -1,0 +1,118 @@
+@import './tokens/colors.css';
+@import './tokens/typography.css';
+@import './tokens/spacing.css';
+@import './tokens/effects.css';
+@import './tokens/base.css';
+
+html,
+body,
+#root {
+  height: 100%;
+}
+html {
+  background: #dee3e9;
+}
+body {
+  margin: 0;
+  min-height: 100%;
+  background: #dee3e9;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+a {
+  color: #018017;
+  text-decoration: none;
+}
+a:hover {
+  color: #006612;
+}
+* {
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #e5e5e5;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Hover states. The prototype expressed these as `style-hover` attributes;
+   inline styles can't target :hover, so they live here as classes. */
+.hover-grey:hover {
+  background: #f5f5f5;
+}
+.hover-outline:hover {
+  background: #fafafa !important;
+  box-shadow: inset 0 0 0 1px #d4d4d4, 0 0.5px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+.hover-grey-100:hover {
+  background: var(--grey-100);
+}
+.hover-grey-200:hover {
+  background: var(--grey-200) !important;
+}
+.hover-row:hover {
+  background: var(--grey-50);
+}
+.hover-option:hover {
+  background: #efefef !important;
+}
+.hover-panel-head:hover {
+  background: #fafafa;
+  color: #171717 !important;
+}
+.hover-half-name:hover {
+  background: var(--grey-100);
+  color: var(--grey-900) !important;
+}
+.hover-add:hover {
+  background: #018017 !important;
+}
+
+/* Collapsed accordion rows in the order panel. */
+.acc-head {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  padding: var(--space-2-5) var(--space-3);
+  align-items: center;
+  cursor: pointer;
+  background: var(--grey-50);
+  color: var(--grey-500);
+  transition: background 160ms ease-out;
+}
+.acc-head:hover {
+  color: var(--grey-900);
+  background: var(--grey-100);
+}
+
+/* Dish cards. */
+.dish-card {
+  cursor: none;
+}
+.dish-card:hover {
+  box-shadow: inset 0 0 0 1px var(--primary-400), 0 2px 6px 0 rgba(0, 0, 0, 0.04) !important;
+}
+.dish-card:hover .dish-img,
+.diy-card:hover .diy-img {
+  transform: scale(1.04);
+}
+.diy-card:hover {
+  box-shadow: inset 0 0 0 1px var(--primary-400) !important;
+}
+.diy-card[data-on='1']:hover {
+  box-shadow: inset 0 0 0 1px var(--primary-400), 0 0 0 2px var(--primary-50) !important;
+}
+.qty-badge {
+  background: var(--primary-400);
+  transition: background-color 160ms ease-out;
+}
+.qty-badge:hover {
+  background: var(--grey-600);
+}

@@ -1,0 +1,26 @@
+/* Happy — Effects. The file has no shadow variables; these are the literal
+   effect stacks components use, named so they stay consistent. Borders are
+   drawn as inset box-shadows (not CSS borders) so they never affect layout. */
+:root{
+/* the one ambient shadow, on every raised control */
+--shadow-control:0px 0.5px 2px 0px rgba(0,0,0,0.05);
+/* floating surfaces: dropdown panels, toasts */
+--shadow-popover:0px 1px 3px 0px rgba(0,0,0,0.16);
+
+--hairline:inset 0 0 0 1px var(--grey-200);
+--hairline-strong:inset 0 0 0 1px var(--grey-300);
+--hairline-focus:inset 0 0 0 1px var(--primary-400);
+
+/* focus rings: solid hairline + 2px halo. --focused-primary-50 is the one
+   ring used by buttons, icon buttons and all form controls. */
+--focused-primary-50:0px 0px 0px 2px var(--primary-50);
+--focused-primary-200:0px 0px 0px 2px var(--primary-200);
+
+/* Tag: white-to-tint vertical wash */
+--tag-wash-grey:linear-gradient(180deg,#FFFFFF 0%,var(--grey-100) 100%);
+--tag-wash-primary:linear-gradient(180deg,#FFFFFF 0%,var(--primary-50) 100%);
+--tag-wash-red:linear-gradient(180deg,#FFFFFF 0%,var(--danger-50) 100%);
+--tag-wash-yellow:linear-gradient(180deg,#FFFFFF 0%,var(--warning-100) 100%);
+--tag-wash-blue:linear-gradient(180deg,#FFFFFF 0%,var(--info-50) 100%);
+--tag-wash-purple:linear-gradient(180deg,#FFFFFF 0%,var(--purple-50) 100%);
+}
