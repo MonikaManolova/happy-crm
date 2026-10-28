@@ -1,9 +1,14 @@
 import { useState, type CSSProperties } from 'react';
+import { Icon } from './Icon';
 
 /* Happy design system — HorizontalTabs (components/navigation/HorizontalTabs.jsx). */
 
-function TabButton({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+export type TabItem = string | { label: string; icon?: string; count?: number };
+const norm = (it: TabItem) => (typeof it === 'string' ? { label: it } : it);
+
+function TabButton({ item, active, fill, onClick }: { item: TabItem; active: boolean; fill: boolean; onClick: () => void }) {
   const [hover, setHover] = useState(false);
+  const { label, icon, count } = norm(item);
   return (
     <button
       type="button"
@@ -32,11 +37,17 @@ function TabButton({ label, active, onClick }: { label: string; active: boolean;
         fontWeight: 'var(--font-medium)',
         lineHeight: 'var(--leading-5)',
         whiteSpace: 'nowrap',
+        flex: fill ? '1 0 0' : undefined,
+        minWidth: fill ? 0 : undefined,
         flexShrink: 0,
         transition: 'background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease, color 150ms ease',
       }}
     >
-      <span style={{ display: 'flex', alignItems: 'center', padding: '0 var(--space-0-5)' }}>{label}</span>
+      {icon ? <Icon icon={icon} size={18} /> : null}
+      <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-1)', padding: '0 var(--space-0-5)' }}>
+        {label}
+        {count != null ? <span style={{ opacity: 0.7 }}>{count}</span> : null}
+      </span>
     </button>
   );
 }
@@ -45,33 +56,40 @@ export function HorizontalTabs({
   items,
   value,
   onChange,
+  fill = false,
+  label,
   style,
 }: {
-  items: string[];
+  items: TabItem[];
   value: number;
   onChange: (index: number) => void;
+  /** Stretch to the full width with equal-width tabs. */
+  fill?: boolean;
+  /** Accessible name of the tab list. */
+  label?: string;
   style?: CSSProperties;
 }) {
   return (
     <div
       role="tablist"
+      aria-label={label}
       style={{
         borderRadius: 'var(--rounded-lg)',
         background: 'var(--grey-50)',
         boxShadow: 'var(--hairline), var(--shadow-control)',
-        display: 'inline-flex',
+        display: fill ? 'flex' : 'inline-flex',
         flexDirection: 'row',
         gap: 'var(--space-0-5)',
         alignItems: 'center',
         maxWidth: '100%',
         overflowX: 'auto',
         flexShrink: 0,
-        alignSelf: 'flex-start',
+        alignSelf: fill ? 'stretch' : 'flex-start',
         ...style,
       }}
     >
-      {items.map((label, i) => (
-        <TabButton key={label} label={label} active={value === i} onClick={() => onChange(i)} />
+      {items.map((it, i) => (
+        <TabButton key={norm(it).label} item={it} active={value === i} fill={fill} onClick={() => onChange(i)} />
       ))}
     </div>
   );

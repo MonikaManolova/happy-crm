@@ -26,15 +26,30 @@ export interface OrderPanelProps {
   onBump: (key: string, delta: number) => void;
   onEdit: (line: CartLine) => void;
   onSubmit: () => void;
+  /** Panel heading, e.g. "Нова поръчка" or "Поръчка". */
+  title?: string;
+  /** Starting order details (notes, recipient, time, payment). */
+  initialDetails?: OrderDetailsValue;
+  initialPromo?: string | null;
 }
 
-export function OrderPanel({ cart, notes, onNote, onBump, onEdit, onSubmit }: OrderPanelProps) {
+export function OrderPanel({
+  cart,
+  notes,
+  onNote,
+  onBump,
+  onEdit,
+  onSubmit,
+  title = 'Нова поръчка',
+  initialDetails = EMPTY_DETAILS,
+  initialPromo = null,
+}: OrderPanelProps) {
   const [minOn, setMinOn] = useState(true);
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
-  const [details, setDetails] = useState<OrderDetailsValue>(EMPTY_DETAILS);
+  const [details, setDetails] = useState<OrderDetailsValue>(initialDetails);
   const [voucher, setVoucher] = useState(false);
-  const [promo, setPromo] = useState<string | null>(null);
+  const [promo, setPromo] = useState<string | null>(initialPromo);
   const [invoiceOpen, setInvoiceOpen] = useState(false);
   const [invoices, setInvoices] = useState<Invoice[]>(DEFAULT_INVOICES);
   const [invoiceSel, setInvoiceSel] = useState<number | null>(DEFAULT_INVOICES[0].id);
@@ -95,7 +110,7 @@ export function OrderPanel({ cart, notes, onNote, onBump, onEdit, onSubmit }: Or
     >
       <div style={{ height: 56, flexShrink: 0, display: 'flex', flexDirection: 'row', gap: 10, padding: '14px 16px', alignItems: 'center' }}>
         <div style={{ display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'flex-start', flex: '1 1 auto', minWidth: 0 }}>
-          <h2 style={{ margin: 0, fontWeight: 600, fontSize: 18, lineHeight: '28px', color: '#171717', whiteSpace: 'nowrap' }}>Нова поръчка</h2>
+          <h2 style={{ margin: 0, fontWeight: 600, fontSize: 18, lineHeight: '28px', color: '#171717', whiteSpace: 'nowrap' }}>{title}</h2>
           <span style={{ fontWeight: 400, fontSize: 18, lineHeight: '28px', color: '#525252', whiteSpace: 'nowrap' }}>{ORDER_ID}</span>
         </div>
         {hasItems ? (

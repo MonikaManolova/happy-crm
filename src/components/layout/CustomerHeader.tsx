@@ -1,10 +1,10 @@
-import { useState, type CSSProperties } from 'react';
+import { Fragment, useState, type CSSProperties } from 'react';
 import { ADDRESSES, CUSTOMER } from '../../data/app';
 import { icon } from '../../lib/assets';
 import { Icon } from '../ds/Icon';
 import { AddressModal } from './AddressModal';
 
-const crumb: CSSProperties = { fontWeight: 500, fontSize: 12, lineHeight: '16px' };
+const crumb: CSSProperties = { fontWeight: 500, fontSize: 14, lineHeight: '20px', whiteSpace: 'nowrap' };
 const meta: CSSProperties = { fontWeight: 500, fontSize: 12, lineHeight: '16px', color: '#525252', whiteSpace: 'nowrap' };
 const control = 'inset 0 0 0 0.5px #E5E5E5,0 0 0 0.5px #E5E5E5,0 0.5px 2px 0 rgba(0,0,0,0.05)';
 const ellipsis: CSSProperties = { fontWeight: 400, fontSize: 14, lineHeight: '20px', color: '#171717', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' };
@@ -57,7 +57,16 @@ function BrandButton({ label, iconName, background, color = '#FFFFFF', outline }
   );
 }
 
-export function CustomerHeader() {
+export interface PageHeader {
+  /** Breadcrumb trail; the last item is the current page. */
+  breadcrumb: string[];
+  /** Page title. Without one, the client's name is the title. */
+  title?: string;
+  /** Show the "Сигнал" action. */
+  signal?: boolean;
+}
+
+export function CustomerHeader({ header }: { header: PageHeader }) {
   const [addressId, setAddressId] = useState(ADDRESSES[0].id);
   const [addressOpen, setAddressOpen] = useState(false);
   // Choice inside the open modal; applied only on "Запази".
@@ -81,27 +90,56 @@ export function CustomerHeader() {
       }}
     >
       <div style={{ height: 108, display: 'flex', flexDirection: 'column', gap: 12, justifyContent: 'center', alignItems: 'flex-start' }}>
-        <nav aria-label="Път" style={{ height: 20, display: 'flex', flexDirection: 'row', gap: 6, alignItems: 'center' }}>
-          <span style={{ ...crumb, color: '#737373', cursor: 'pointer' }}>Нова offline поръчка</span>
-          <span style={{ ...crumb, color: '#A3A3A3' }}>/</span>
-          <span aria-current="page" style={{ ...crumb, color: '#171717' }}>{CUSTOMER.name}</span>
+        {/* Breadcrumb (Figma 531:5997): earlier items --grey-400, the current one --grey-900. */}
+        <nav aria-label="Път" style={{ height: 20, display: 'flex', flexDirection: 'row', gap: 'var(--space-1-5)', alignItems: 'center' }}>
+          {header.breadcrumb.map((item, i) => {
+            const current = i === header.breadcrumb.length - 1;
+            return (
+              <Fragment key={item}>
+                {i > 0 ? (
+                  <span aria-hidden="true" style={{ fontWeight: 500, fontSize: 12, lineHeight: '16px', color: 'var(--grey-400)' }}>
+                    /
+                  </span>
+                ) : null}
+                <span aria-current={current ? 'page' : undefined} style={{ ...crumb, color: current ? 'var(--grey-900)' : 'var(--grey-400)', cursor: current ? undefined : 'pointer' }}>
+                  {item}
+                </span>
+              </Fragment>
+            );
+          })}
         </nav>
 
         <div style={{ height: 76, alignSelf: 'stretch', display: 'flex', flexDirection: 'column', gap: 8, justifyContent: 'center', alignItems: 'flex-start' }}>
           <div style={{ height: 36, alignSelf: 'stretch', display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'center' }}>
             <div style={{ height: 32, display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'center', flexGrow: 1 }}>
-              <div style={{ height: 32, display: 'flex', flexDirection: 'row', gap: 4, alignItems: 'flex-start', flexShrink: 0 }}>
-                <h1 style={{ margin: 0, fontWeight: 600, fontSize: 20, lineHeight: '32px', color: '#171717', whiteSpace: 'nowrap' }}>{CUSTOMER.name}</h1>
-                <button
-                  type="button"
-                  aria-label="Редактирай клиента"
-                  className="hover-grey"
-                  style={{ appearance: 'none', border: 'none', background: 'transparent', width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, cursor: 'pointer' }}
-                >
-                  <img src={icon('LucidePencil-g5')} alt="" style={{ width: 18, height: 18 }} />
-                </button>
-              </div>
+              {header.title ? (
+                <h1 style={{ margin: 0, fontWeight: 600, fontSize: 20, lineHeight: '32px', color: '#171717', whiteSpace: 'nowrap', flexShrink: 0 }}>{header.title}</h1>
+              ) : (
+                <div style={{ height: 32, display: 'flex', flexDirection: 'row', gap: 4, alignItems: 'flex-start', flexShrink: 0 }}>
+                  <h1 style={{ margin: 0, fontWeight: 600, fontSize: 20, lineHeight: '32px', color: '#171717', whiteSpace: 'nowrap' }}>{CUSTOMER.name}</h1>
+                  <button
+                    type="button"
+                    aria-label="Редактирай клиента"
+                    className="hover-grey"
+                    style={{ appearance: 'none', border: 'none', background: 'transparent', width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, cursor: 'pointer' }}
+                  >
+                    <img src={icon('LucidePencil-g5')} alt="" style={{ width: 18, height: 18 }} />
+                  </button>
+                </div>
+              )}
               <div style={{ height: 24, display: 'flex', flexDirection: 'row', gap: 6, alignItems: 'center', flexShrink: 0 }}>
+                {header.title ? (
+                  <>
+                    <Icon icon="LucideChevronsRight" size={18} color="var(--grey-500)" />
+                    {/* The client, secondary to the page title (Figma 937:4775). */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-1)', paddingRight: 'var(--space-1)' }}>
+                      <div style={{ width: 24, height: 24, borderRadius: 26, background: 'var(--primary-50)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <Icon icon="LucideUserRound" size={14} color="var(--primary-600)" />
+                      </div>
+                      <span style={{ fontWeight: 600, fontSize: 16, lineHeight: '24px', color: 'var(--grey-900)', whiteSpace: 'nowrap' }}>{CUSTOMER.name}</span>
+                    </div>
+                  </>
+                ) : null}
                 <div style={{ height: 24, borderRadius: 26, boxShadow: 'inset 0 0 0 1px #66C27F', display: 'flex', flexDirection: 'row', gap: 4, padding: '4px 10px 4px 8px', alignItems: 'center' }}>
                   <div style={{ width: 10, height: 10, borderRadius: 9999, background: '#CCE6D1', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#33A556' }} />
@@ -164,6 +202,13 @@ export function CustomerHeader() {
               <img src={icon('LucideClock4-gd')} alt="" style={{ width: 18, height: 18, flexShrink: 0 }} />
               <span style={{ display: 'flex', padding: '0 2px', fontWeight: 400, fontSize: 14, lineHeight: '20px', color: '#015410', whiteSpace: 'nowrap' }}>{CUSTOMER.deliveryEta}</span>
             </div>
+            {header.signal ? (
+              // "Сигнал" (Figma 1092:75445): plain markup on purpose, not a design-system Button.
+              <button type="button" className="signal-button">
+                <Icon icon="LucideTriangleAlert" size={18} />
+                Сигнал
+              </button>
+            ) : null}
           </div>
         </div>
       </div>

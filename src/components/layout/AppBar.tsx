@@ -1,6 +1,8 @@
+import type { ReactNode } from 'react';
 import { icon } from '../../lib/assets';
 
-export function AppBar() {
+/** `action` sits right after the "Admin" title (e.g. a page switch). */
+export function AppBar({ action }: { action?: ReactNode }) {
   return (
     <header
       style={{
@@ -21,10 +23,17 @@ export function AppBar() {
       <button type="button" aria-label="Меню" style={plainButton}>
         <img src={icon('Bars3-a3')} alt="" style={{ width: 24, height: 24 }} />
       </button>
-      <div style={{ position: 'relative', width: 99.344, height: 20, overflow: 'hidden', flexShrink: 0 }}>
-        <span style={{ position: 'absolute', left: 8, top: 0, fontWeight: 700, fontSize: 18, lineHeight: '20px', color: '#000000', whiteSpace: 'nowrap' }}>
-          Admin
-        </span>
+      {/* Figma "Logo" (997:19034): the title, then "/" and the page switch, 12px apart. */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', padding: '0 8px', flexShrink: 0, whiteSpace: 'nowrap' }}>
+        <span style={{ fontWeight: 700, fontSize: 18, lineHeight: '20px', color: '#000000' }}>Admin</span>
+        {action ? (
+          <>
+            <span aria-hidden="true" style={{ fontWeight: 500, fontSize: 12, lineHeight: '16px', color: 'var(--grey-400)' }}>
+              /
+            </span>
+            {action}
+          </>
+        ) : null}
       </div>
       <div style={{ position: 'relative', height: 44, display: 'flex', flexDirection: 'row', gap: 8, justifyContent: 'flex-end', alignItems: 'center', flexGrow: 1 }}>
         <button
