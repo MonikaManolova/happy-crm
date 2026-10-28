@@ -14,8 +14,8 @@ export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
   size?: ControlSize;
   disabled?: boolean;
   tooltip?: string;
-  /** Where the tooltip sits: above and centred (default), or right-aligned above or below. */
-  tooltipPlacement?: 'top' | 'top-end' | 'bottom-end';
+  /** Where the tooltip sits: above and centred (default), right-aligned above or below, or to the right. */
+  tooltipPlacement?: 'top' | 'top-end' | 'bottom-end' | 'right';
 }
 
 export function IconButton({ icon, size = 'medium', disabled = false, tooltip, tooltipPlacement = 'top', style, ...rest }: IconButtonProps) {
@@ -76,7 +76,7 @@ export function IconButton({ icon, size = 'medium', disabled = false, tooltip, t
           rect={rect}
           text={tooltip}
           align={tooltipPlacement === 'top' ? 'center' : 'end'}
-          side={tooltipPlacement === 'bottom-end' ? 'bottom' : 'top'}
+          side={tooltipPlacement === 'bottom-end' ? 'bottom' : tooltipPlacement === 'right' ? 'right' : 'top'}
         />
       ) : null}
     </span>

@@ -172,7 +172,9 @@ a:hover {
 
 @media (prefers-reduced-motion: reduce) {
   .side-panel,
-  .modal-dialog {
+  .modal-dialog,
+  .control-panel,
+  .control-panel > * {
     transition: none !important;
   }
 }
