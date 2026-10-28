@@ -1,8 +1,12 @@
 import { useEffect, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { IconButton } from './IconButton';
 
 /* Happy design system — Modal (components/overlays/Modal.jsx), rendered on a
    dimmed backdrop. Esc and a backdrop click both call `onClose`. */
+
+/** Dim layer behind overlays (Modal, SidePanel). */
+export const BACKDROP = 'rgba(23, 23, 23, 0.5)';
 
 export function Modal({
   title,
@@ -27,14 +31,15 @@ export function Modal({
     return () => document.removeEventListener('keydown', esc);
   }, [onClose]);
 
-  return (
+  // Portalled to <body> so no ancestor's stacking context (e.g. the app bar) can cover it.
+  return createPortal(
     <div
       onClick={onClose}
       style={{
         position: 'fixed',
         inset: 0,
         zIndex: 5000,
-        background: 'rgba(23, 23, 23, 0.5)',
+        background: BACKDROP,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -120,6 +125,7 @@ export function Modal({
           </div>
         ) : null}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

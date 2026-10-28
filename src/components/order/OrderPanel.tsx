@@ -9,6 +9,7 @@ import { WarningMessage } from '../ds/Message';
 import { CartRow } from './CartRow';
 import { Collapse } from './Collapse';
 import { InvoiceModal, type Invoice } from './InvoiceModal';
+import { LinkOrderPanel } from './LinkOrderPanel';
 import { EMPTY_DETAILS, OrderDetails, type OrderDetailsValue } from './OrderDetails';
 import { Totals } from './Totals';
 
@@ -37,6 +38,8 @@ export function OrderPanel({ cart, notes, onNote, onBump, onEdit, onSubmit }: Or
   const [invoices, setInvoices] = useState<Invoice[]>(DEFAULT_INVOICES);
   const [invoiceSel, setInvoiceSel] = useState<number | null>(DEFAULT_INVOICES[0].id);
   const [invoice, setInvoice] = useState<string | null>(null);
+  const [linkOpen, setLinkOpen] = useState(false);
+  const [linkedOrder, setLinkedOrder] = useState<string | null>(null);
 
   useEffect(() => {
     if (!moreOpen) return undefined;
@@ -121,7 +124,7 @@ export function OrderPanel({ cart, notes, onNote, onBump, onEdit, onSubmit }: Or
             </button>
             <div style={{ width: 1, height: 16, background: 'var(--grey-400)' }} />
             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 'var(--space-1)' }}>
-              <Button type="outline" size="medium" iconOnly icon="LucidePackagePlus" tooltip="Свържи към поръчка" />
+              <Button type="outline" size="medium" iconOnly icon="LucidePackagePlus" tooltip="Свържи към поръчка" aria-pressed={!!linkedOrder} onClick={() => setLinkOpen(true)} />
               <div ref={moreRef} style={{ position: 'relative', display: 'flex' }}>
                 <Button type="outline" size="medium" iconOnly icon="LucideEllipsis" tooltip="Още действия" aria-expanded={moreOpen} onClick={() => setMoreOpen((v) => !v)} />
                 {moreOpen ? (
@@ -184,6 +187,8 @@ export function OrderPanel({ cart, notes, onNote, onBump, onEdit, onSubmit }: Or
           </div>
         </div>
       )}
+
+      {linkOpen ? <LinkOrderPanel onLink={setLinkedOrder} onClose={() => setLinkOpen(false)} /> : null}
 
       {invoiceOpen ? (
         <InvoiceModal

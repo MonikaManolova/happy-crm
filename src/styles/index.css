@@ -116,3 +116,9 @@ a:hover {
 .qty-badge:hover {
   background: var(--grey-600);
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .side-panel {
+    transition: none !important;
+  }
+}
