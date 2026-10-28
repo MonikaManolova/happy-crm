@@ -168,11 +168,11 @@ export function CartRow({ line, last, note, onNote, onBump, onEdit }: CartRowPro
           <IconButton
             size="small"
             icon={icon(line.qty <= 1 ? 'LucideTrash' : 'LucideMinus')}
-            tooltip={line.qty <= 1 ? 'Премахни' : 'Намали'}
+            tooltip={line.qty <= 1 ? 'Изтрий' : 'Премахни'}
             onClick={() => onBump(-1)}
           />
           <span style={{ fontWeight: 500, fontSize: 14, lineHeight: '20px', color: '#171717', minWidth: 14, textAlign: 'center' }}>{line.qty}</span>
-          <IconButton size="small" icon={icon('LucidePlus')} tooltip="Увеличи" onClick={() => onBump(1)} />
+          <IconButton size="small" icon={icon('LucidePlus')} tooltip="Добави" onClick={() => onBump(1)} />
         </div>
       </div>
     </div>
