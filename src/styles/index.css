@@ -42,6 +42,19 @@ a:hover {
   background: transparent;
 }
 
+/* Visually hidden text for screen readers. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Hover states. The prototype expressed these as `style-hover` attributes;
    inline styles can't target :hover, so they live here as classes. */
 .hover-grey:hover {
@@ -170,11 +183,36 @@ a:hover {
   background: var(--grey-50);
 }
 
+/* Signals count on the collapsed control panel rail: a ring pulses out of it. */
+.signal-badge-pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--warning-600);
+  animation: signal-pulse 1.2s ease-out infinite;
+  z-index: -1;
+}
+@keyframes signal-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  80%,
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .side-panel,
   .modal-dialog,
   .control-panel,
   .control-panel > * {
     transition: none !important;
+  }
+  .signal-badge-pulse::after {
+    animation: none;
   }
 }

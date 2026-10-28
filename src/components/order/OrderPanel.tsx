@@ -142,7 +142,7 @@ export function OrderPanel({
               {linkedOrder ? (
                 // Linked: the button shows the order number, with an X to unlink (Figma 974:9014).
                 <div style={{ display: 'flex', alignItems: 'center', borderRadius: 'var(--rounded-lg)', background: 'var(--grey-100)' }}>
-                  <Button type="outline" size="medium" icon="LucidePackagePlus" tooltip="Свържи към поръчка" onClick={() => setLinkOpen(true)}>
+                  <Button type="outline" size="medium" icon="LucidePackagePlus" onClick={() => setLinkOpen(true)}>
                     {linkedOrder}
                   </Button>
                   <IconButton size="medium" icon={icon('LucideX-g5')} tooltip="Премахни" aria-label="Премахни свързаната поръчка" onClick={() => setLinkedOrder(null)} />

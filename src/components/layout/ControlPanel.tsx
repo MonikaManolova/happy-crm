@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { SIGNALS, type Signal } from '../../data/signals';
 import { icon } from '../../lib/assets';
 import { Button } from '../ds/Button';
+import { Dropdown } from '../ds/Dropdown';
 import { IconButton } from '../ds/IconButton';
 import { HorizontalTabs } from '../ds/Tabs';
 import { SignalCard } from './SignalCard';
+import { TrackingTimeline } from './TrackingTimeline';
 
 const EXPANDED_WIDTH = 400;
 /** 48px rail + the 1px right border (Figma 1078:73917). */
@@ -12,6 +15,8 @@ const COLLAPSED_WIDTH = 49;
 const ANIM_MS = 240;
 /** The rail's buttons vanish quickly on expand, so they don't linger over the opening panel. */
 const RAIL_HIDE_MS = 80;
+
+const RK_LOGS = ['RK Log', 'RK Log Browser'];
 
 const SIGNALS_TAB = 0;
 const TRACKING_TAB = 1;
@@ -25,6 +30,57 @@ function Layer({ hidden, hideMs = ANIM_MS, style, children }: { hidden: boolean;
   return (
     <div ref={ref} aria-hidden={hidden} style={{ opacity: hidden ? 0 : 1, transition: `opacity ${hidden ? hideMs : ANIM_MS}ms ease-out`, pointerEvents: hidden ? 'none' : undefined, ...style }}>
       {children}
+    </div>
+  );
+}
+
+/** The rail's "Настройки" button: opens the RK log shortcuts beside the rail. */
+function SettingsMenu() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const buttonRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const away = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (!buttonRef.current?.contains(t) && !menuRef.current?.contains(t)) setMenuOpen(false);
+    };
+    const esc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    document.addEventListener('mousedown', away);
+    document.addEventListener('keydown', esc);
+    return () => {
+      document.removeEventListener('mousedown', away);
+      document.removeEventListener('keydown', esc);
+    };
+  }, [menuOpen]);
+
+  // The rail clips its overflow, so the menu is portalled and pinned next to the button, bottom-aligned.
+  const rect = menuOpen ? buttonRef.current?.getBoundingClientRect() : undefined;
+  return (
+    <div ref={buttonRef} style={{ display: 'flex' }}>
+      <Button
+        type="outline"
+        size="medium"
+        iconOnly
+        icon="LucideSettings"
+        tooltip={menuOpen ? undefined : 'Настройки'}
+        tooltipPlacement="right"
+        aria-label="Настройки"
+        aria-haspopup="listbox"
+        aria-expanded={menuOpen}
+        onClick={() => setMenuOpen((v) => !v)}
+      />
+      {rect
+        ? createPortal(
+            <div ref={menuRef} style={{ position: 'fixed', left: rect.right + 6, bottom: window.innerHeight - rect.bottom, zIndex: 30 }}>
+              <Dropdown items={RK_LOGS} search={false} width={200} onSelect={() => setMenuOpen(false)} />
+            </div>,
+            document.body,
+          )
+        : null}
     </div>
   );
 }
@@ -73,7 +129,7 @@ export function ControlPanel() {
       <Layer hidden={collapsed} style={{ width: EXPANDED_WIDTH - 1, height: '100%', display: 'flex', flexDirection: 'column' }}>
         <div style={{ height: 48, flexShrink: 0, display: 'flex', alignItems: 'center', gap: 'var(--space-2)', padding: '10px 14px' }}>
           <h2 style={{ margin: 0, flex: '1 0 0', minWidth: 0, fontWeight: 600, fontSize: 16, lineHeight: '24px', color: 'var(--grey-900)' }}>Контролен панел</h2>
-          <IconButton size="small" icon={icon('LucidePanelLeftClose')} tooltip="Скрий панела" tooltipPlacement="bottom-end" onClick={() => setCollapsed(true)} />
+          <IconButton size="small" icon={icon('LucidePanelLeftClose')} tooltip="Скрий панела" tooltipPlacement="right" onClick={() => setCollapsed(true)} />
         </div>
 
         <div style={{ flex: '1 0 0', minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', padding: '0 16px 16px' }}>
@@ -91,16 +147,15 @@ export function ControlPanel() {
             ? signals.map((s) => (
                 <SignalCard key={s.id} signal={s} onReply={(reply) => setSignals((list) => list.map((x) => (x.id === s.id ? { ...x, reply } : x)))} />
               ))
-            : null}
+            : <TrackingTimeline />}
         </div>
 
         <div style={{ flexShrink: 0, borderTop: '1px solid var(--grey-200)', padding: 8, display: 'flex', gap: 'var(--space-1-5)' }}>
-          <Button type="outline" size="medium">
-            RK Log
-          </Button>
-          <Button type="outline" size="medium">
-            RK Log Browser
-          </Button>
+          {RK_LOGS.map((label) => (
+            <Button key={label} type="outline" size="medium">
+              {label}
+            </Button>
+          ))}
         </div>
       </Layer>
 
@@ -115,8 +170,10 @@ export function ControlPanel() {
             {signals.length ? (
               <span
                 aria-hidden="true"
+                className={collapsed ? 'signal-badge-pulse' : undefined}
                 style={{
                   position: 'absolute',
+                  zIndex: 0,
                   top: -4,
                   right: -4,
                   minWidth: 16,
@@ -141,7 +198,7 @@ export function ControlPanel() {
           <Button type="outline" size="medium" iconOnly icon="LucideHistory" tooltip="Проследяване" tooltipPlacement="right" onClick={() => open(TRACKING_TAB)} />
         </div>
         <div style={{ flexShrink: 0, borderTop: '1px solid var(--grey-200)', padding: 8 }}>
-          <Button type="outline" size="medium" iconOnly icon="LucideSettings" tooltip="Настройки" tooltipPlacement="right" onClick={() => open()} />
+          {collapsed ? <SettingsMenu /> : null}
         </div>
       </Layer>
     </aside>
