@@ -1,6 +1,8 @@
 import type { CSSProperties, ReactNode } from 'react';
+import { Icon } from './Icon';
 
-/* Happy design system — Tag (components/data-display/Tag.jsx), medium size. */
+/* Happy design system — Tag (components/data-display/Tag.jsx), medium size.
+   `icon` is an icon name or URL, drawn in the tag's text colour. */
 
 const COLORS = {
   grey: { background: 'var(--tag-wash-grey)', border: 'var(--grey-200)', color: 'var(--grey-600)' },
@@ -11,7 +13,17 @@ const COLORS = {
   purple: { background: 'var(--tag-wash-purple)', border: 'var(--purple-200)', color: 'var(--purple-600)' },
 };
 
-export function Tag({ color = 'grey', children, style }: { color?: keyof typeof COLORS; children: ReactNode; style?: CSSProperties }) {
+export function Tag({
+  color = 'grey',
+  icon,
+  children,
+  style,
+}: {
+  color?: keyof typeof COLORS;
+  icon?: string;
+  children: ReactNode;
+  style?: CSSProperties;
+}) {
   const c = COLORS[color];
   return (
     <span
@@ -29,6 +41,7 @@ export function Tag({ color = 'grey', children, style }: { color?: keyof typeof 
         ...style,
       }}
     >
+      {icon ? <Icon icon={icon} size={18} /> : null}
       <span
         style={{
           display: 'flex',

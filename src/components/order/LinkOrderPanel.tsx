@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { ACTIVE_ORDERS } from '../../data/app';
 import { asset, icon } from '../../lib/assets';
 import { Button } from '../ds/Button';
+import { HoverCard } from '../ds/HoverCard';
 import { fieldVisual, hair } from '../ds/Field';
 import { IconButton } from '../ds/IconButton';
 import { Input } from '../ds/Input';
 import { Radio } from '../ds/Radio';
 import { SidePanel } from '../ds/SidePanel';
 import { TextButton } from '../ds/TextButton';
+import { OrderInfoCard } from './OrderInfoCard';
 
 const muted = { fontWeight: 400, fontSize: 14, lineHeight: '20px', color: 'var(--grey-600)' } as const;
 
@@ -68,7 +70,9 @@ export function LinkOrderPanel({ onLink, onClose }: { onLink: (orderId: string) 
                   <span style={{ fontWeight: 600, fontSize: 16, lineHeight: '24px', color: 'var(--grey-900)', whiteSpace: 'nowrap' }}>{o.id}</span>
                   <span style={{ ...muted, whiteSpace: 'nowrap' }}>{o.placedAt}</span>
                 </div>
-                <TextButton style={{ textDecoration: 'underline' }}>Детайли</TextButton>
+                <HoverCard content={<OrderInfoCard order={o} />}>
+                  <TextButton style={{ textDecoration: 'underline' }}>Детайли</TextButton>
+                </HoverCard>
                 <IconButton size="small" icon={icon('LucideExternalLink')} tooltip="Към поръчката" tooltipPlacement="top-end" />
               </div>
             ))}

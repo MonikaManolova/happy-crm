@@ -40,5 +40,16 @@ export const DEFAULT_INVOICES = [
   { id: 2, label: 'Бозмов ЕООД, ЕИК: 893000123' },
 ];
 
+export interface ActiveOrder {
+  id: string;
+  placedAt: string;
+  status: string;
+  restaurant: string;
+  delivery: string;
+  eta: string;
+}
+
 /** The customer's other open orders, which a new order can be linked to. */
-export const ACTIVE_ORDERS = [{ id: '#1023', placedAt: 'Днес, 09:25' }];
+export const ACTIVE_ORDERS: ActiveOrder[] = [
+  { id: '#1023', placedAt: 'Днес, 09:25', status: 'Приготвя се', restaurant: 'Happy Саут Парк', delivery: 'До адрес', eta: '13:10' },
+];
