@@ -55,7 +55,8 @@ export function OrderPanel({ cart, notes, onNote, onBump, onEdit, onSubmit }: Or
   }, [moreOpen]);
 
   const hasItems = cart.length > 0;
-  // The header actions only show while the order has items; close the menu with them.
+
+  // The header actions are hidden while the cart is empty, so close the menu with them.
   useEffect(() => {
     if (!hasItems) setMoreOpen(false);
   }, [hasItems]);
