@@ -54,6 +54,13 @@ export function OrderPanel({ cart, notes, onNote, onBump, onEdit, onSubmit }: Or
     };
   }, [moreOpen]);
 
+  const hasItems = cart.length > 0;
+
+  // The header actions are hidden while the cart is empty, so close the menu with them.
+  useEffect(() => {
+    if (!hasItems) setMoreOpen(false);
+  }, [hasItems]);
+
   const products = productsTotal(cart);
   const totals = orderTotals(products, DELIVERY_FEE, voucher ? VOUCHER_AMOUNT : 0, promoPercent(promo, DEFAULT_PROMO_PERCENT));
   const belowMin = minOn && cart.length > 0 && products < MIN_ORDER;
@@ -88,42 +95,44 @@ export function OrderPanel({ cart, notes, onNote, onBump, onEdit, onSubmit }: Or
           <h2 style={{ margin: 0, fontWeight: 600, fontSize: 18, lineHeight: '28px', color: '#171717', whiteSpace: 'nowrap' }}>Нова поръчка</h2>
           <span style={{ fontWeight: 400, fontSize: 18, lineHeight: '28px', color: '#525252', whiteSpace: 'nowrap' }}>{ORDER_ID}</span>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 'var(--space-2)', flexShrink: 0 }}>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={minOn}
-            onClick={() => setMinOn((v) => !v)}
-            style={{ appearance: 'none', border: 'none', background: 'transparent', padding: 0, font: 'inherit', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer', userSelect: 'none' }}
-          >
-            <span style={{ fontWeight: 500, fontSize: 14, lineHeight: '20px', color: 'var(--grey-600)', whiteSpace: 'nowrap' }}>Мин. Сума</span>
-            <span
-              style={{
-                position: 'relative',
-                width: 36,
-                height: 20,
-                borderRadius: 'var(--rounded-full)',
-                background: minOn ? 'var(--primary-500)' : 'var(--grey-300)',
-                transition: 'background-color 140ms ease-out',
-                flexShrink: 0,
-              }}
+        {hasItems ? (
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 'var(--space-2)', flexShrink: 0 }}>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={minOn}
+              onClick={() => setMinOn((v) => !v)}
+              style={{ appearance: 'none', border: 'none', background: 'transparent', padding: 0, font: 'inherit', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer', userSelect: 'none' }}
             >
-              <span style={{ position: 'absolute', top: 4, left: minOn ? 20 : 4, width: 12, height: 12, borderRadius: 'var(--rounded-full)', background: 'var(--white)', transition: 'left 140ms ease-out' }} />
-            </span>
-          </button>
-          <div style={{ width: 1, height: 16, background: 'var(--grey-400)' }} />
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 'var(--space-1)' }}>
-            <Button type="outline" size="medium" iconOnly icon="LucidePackagePlus" tooltip="Свържи към поръчка" />
-            <div ref={moreRef} style={{ position: 'relative', display: 'flex' }}>
-              <Button type="outline" size="medium" iconOnly icon="LucideEllipsis" tooltip="Още действия" aria-expanded={moreOpen} onClick={() => setMoreOpen((v) => !v)} />
-              {moreOpen ? (
-                <div style={{ position: 'absolute', top: 'calc(100% + var(--space-1))', right: 0, zIndex: 30 }}>
-                  <Dropdown items={MORE_ITEMS} search={false} width={220} onSelect={() => setMoreOpen(false)} />
-                </div>
-              ) : null}
+              <span style={{ fontWeight: 500, fontSize: 14, lineHeight: '20px', color: 'var(--grey-600)', whiteSpace: 'nowrap' }}>Мин. Сума</span>
+              <span
+                style={{
+                  position: 'relative',
+                  width: 36,
+                  height: 20,
+                  borderRadius: 'var(--rounded-full)',
+                  background: minOn ? 'var(--primary-500)' : 'var(--grey-300)',
+                  transition: 'background-color 140ms ease-out',
+                  flexShrink: 0,
+                }}
+              >
+                <span style={{ position: 'absolute', top: 4, left: minOn ? 20 : 4, width: 12, height: 12, borderRadius: 'var(--rounded-full)', background: 'var(--white)', transition: 'left 140ms ease-out' }} />
+              </span>
+            </button>
+            <div style={{ width: 1, height: 16, background: 'var(--grey-400)' }} />
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 'var(--space-1)' }}>
+              <Button type="outline" size="medium" iconOnly icon="LucidePackagePlus" tooltip="Свържи към поръчка" />
+              <div ref={moreRef} style={{ position: 'relative', display: 'flex' }}>
+                <Button type="outline" size="medium" iconOnly icon="LucideEllipsis" tooltip="Още действия" aria-expanded={moreOpen} onClick={() => setMoreOpen((v) => !v)} />
+                {moreOpen ? (
+                  <div style={{ position: 'absolute', top: 'calc(100% + var(--space-1))', right: 0, zIndex: 30 }}>
+                    <Dropdown items={MORE_ITEMS} search={false} width={220} onSelect={() => setMoreOpen(false)} />
+                  </div>
+                ) : null}
+              </div>
             </div>
           </div>
-        </div>
+        ) : null}
       </div>
 
       <Collapse open={belowMin} duration={200} fade style={{ flexShrink: 0 }}>
