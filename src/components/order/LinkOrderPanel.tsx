@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ACTIVE_ORDERS } from '../../data/app';
 import { asset, icon } from '../../lib/assets';
 import { Button } from '../ds/Button';
+import { fieldVisual, hair } from '../ds/Field';
 import { IconButton } from '../ds/IconButton';
 import { Input } from '../ds/Input';
 import { Radio } from '../ds/Radio';
@@ -45,16 +46,16 @@ export function LinkOrderPanel({ onLink, onClose }: { onLink: (orderId: string) 
             {ACTIVE_ORDERS.map((o) => (
               <div
                 key={o.id}
+                className="order-option"
                 style={{
                   display: 'flex',
                   flexDirection: 'row',
                   alignItems: 'center',
                   gap: 'var(--space-2)',
-                  // Figma strokes sit inside the box: 1px border + 7/9px padding = its 8/10px.
-                  padding: '7px 7px 7px 9px',
+                  padding: '8px 8px 8px 10px',
                   borderRadius: 10,
-                  border: '1px solid var(--grey-300)',
-                  background: 'var(--white)',
+                  // Selected: the same ring as a focused Input.
+                  boxShadow: selected === o.id ? fieldVisual('focused').boxShadow : hair('var(--grey-300)'),
                 }}
               >
                 <div
@@ -68,7 +69,7 @@ export function LinkOrderPanel({ onLink, onClose }: { onLink: (orderId: string) 
                   <span style={{ ...muted, whiteSpace: 'nowrap' }}>{o.placedAt}</span>
                 </div>
                 <TextButton style={{ textDecoration: 'underline' }}>Детайли</TextButton>
-                <IconButton size="small" icon={icon('LucideExternalLink')} aria-label={`Отвори поръчка ${o.id}`} />
+                <IconButton size="small" icon={icon('LucideExternalLink')} tooltip="Към поръчката" tooltipPlacement="top-end" />
               </div>
             ))}
           </div>

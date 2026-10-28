@@ -17,12 +17,23 @@ const tipStyle: CSSProperties = {
   boxShadow: 'var(--shadow-popover)',
 };
 
-/** Dark tooltip above `rect`, either centred on it or right-aligned to it. */
-export function Tooltip({ rect, text, align }: { rect: DOMRect; text: string; align: 'center' | 'end' }) {
+/** Dark tooltip above or below `rect`, either centred on it or right-aligned to it. */
+export function Tooltip({
+  rect,
+  text,
+  align,
+  side = 'top',
+}: {
+  rect: DOMRect;
+  text: string;
+  align: 'center' | 'end';
+  side?: 'top' | 'bottom';
+}) {
+  const x = align === 'center' ? { left: rect.left + rect.width / 2, tx: '-50%' } : { left: rect.right, tx: '-100%' };
   const pos: CSSProperties =
-    align === 'center'
-      ? { top: rect.top - 6, left: rect.left + rect.width / 2, transform: 'translate(-50%, -100%)' }
-      : { top: rect.top - 6, left: rect.right, transform: 'translate(-100%, -100%)' };
+    side === 'top'
+      ? { top: rect.top - 6, left: x.left, transform: `translate(${x.tx}, -100%)` }
+      : { top: rect.bottom + 6, left: x.left, transform: `translate(${x.tx}, 0)` };
   return createPortal(
     <span role="tooltip" style={{ ...tipStyle, ...pos }}>
       {text}

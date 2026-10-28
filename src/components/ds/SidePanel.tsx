@@ -101,7 +101,7 @@ export function SidePanel({
           >
             {title}
           </h2>
-          <IconButton size="small" icon={icon('LucideX-a3')} tooltip="Затвори" onClick={close} />
+          <IconButton size="small" icon={icon('LucideX-a3')} tooltip="Затвори" tooltipPlacement="bottom-end" onClick={close} />
         </div>
         <div style={{ flex: '1 0 0', minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', padding: '0 20px 20px' }}>
           {children}

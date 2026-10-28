@@ -5,7 +5,7 @@ import type { CSSProperties, ReactNode } from 'react';
 export type FieldState = 'default' | 'hover' | 'focused' | 'disabled' | 'error';
 
 /* Borders are a 0.5px inset + 0.5px outset pair — a hairline finer than 1px. */
-const hair = (c: string) => `inset 0 0 0 0.5px ${c}, 0 0 0 0.5px ${c}`;
+export const hair = (c: string) => `inset 0 0 0 0.5px ${c}, 0 0 0 0.5px ${c}`;
 
 export function fieldVisual(state: FieldState): CSSProperties {
   if (state === 'hover') return { background: 'var(--white)', boxShadow: `${hair('var(--grey-300)')}, var(--shadow-control)` };

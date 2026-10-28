@@ -117,6 +117,15 @@ a:hover {
   background: var(--grey-600);
 }
 
+/* Active-order rows in the "Свържи към поръчка" panel. */
+.order-option {
+  background: var(--white);
+  transition: background-color 150ms ease-out, box-shadow 150ms ease-out;
+}
+.order-option:hover {
+  background: var(--grey-50);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .side-panel {
     transition: none !important;

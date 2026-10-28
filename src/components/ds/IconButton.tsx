@@ -14,9 +14,11 @@ export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
   size?: ControlSize;
   disabled?: boolean;
   tooltip?: string;
+  /** Where the tooltip sits: above and centred (default), or right-aligned above or below. */
+  tooltipPlacement?: 'top' | 'top-end' | 'bottom-end';
 }
 
-export function IconButton({ icon, size = 'medium', disabled = false, tooltip, style, ...rest }: IconButtonProps) {
+export function IconButton({ icon, size = 'medium', disabled = false, tooltip, tooltipPlacement = 'top', style, ...rest }: IconButtonProps) {
   const wrapRef = useRef<HTMLSpanElement>(null);
   const [hover, setHover] = useState(false);
   const [focus, setFocus] = useState(false);
@@ -69,7 +71,14 @@ export function IconButton({ icon, size = 'medium', disabled = false, tooltip, s
   return (
     <span ref={wrapRef} style={{ position: 'relative', display: 'inline-flex' }}>
       {btn}
-      {rect ? <Tooltip rect={rect} text={tooltip} align="center" /> : null}
+      {rect ? (
+        <Tooltip
+          rect={rect}
+          text={tooltip}
+          align={tooltipPlacement === 'top' ? 'center' : 'end'}
+          side={tooltipPlacement === 'bottom-end' ? 'bottom' : 'top'}
+        />
+      ) : null}
     </span>
   );
 }
