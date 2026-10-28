@@ -117,6 +117,21 @@ a:hover {
   background: var(--grey-600);
 }
 
+/* Select-style triggers in the customer header ("До адрес", restaurant). */
+.header-select {
+  transition: box-shadow 150ms ease-out;
+}
+.header-select:hover {
+  box-shadow: inset 0 0 0 0.5px var(--grey-300), 0 0 0 0.5px var(--grey-300), var(--shadow-control) !important;
+}
+.header-select .select-chevron {
+  color: var(--grey-500);
+  transition: color 150ms ease-out;
+}
+.header-select:hover .select-chevron {
+  color: var(--grey-900);
+}
+
 /* Active-order rows in the "Свържи към поръчка" panel. */
 .order-option {
   background: var(--white);
@@ -127,7 +142,8 @@ a:hover {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .side-panel {
+  .side-panel,
+  .modal-dialog {
     transition: none !important;
   }
 }

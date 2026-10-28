@@ -1,11 +1,22 @@
-import type { CSSProperties } from 'react';
-import { CUSTOMER } from '../../data/app';
+import { useState, type CSSProperties } from 'react';
+import { ADDRESSES, CUSTOMER } from '../../data/app';
 import { icon } from '../../lib/assets';
+import { Icon } from '../ds/Icon';
+import { AddressModal } from './AddressModal';
 
 const crumb: CSSProperties = { fontWeight: 500, fontSize: 12, lineHeight: '16px' };
 const meta: CSSProperties = { fontWeight: 500, fontSize: 12, lineHeight: '16px', color: '#525252', whiteSpace: 'nowrap' };
 const control = 'inset 0 0 0 0.5px #E5E5E5,0 0 0 0.5px #E5E5E5,0 0.5px 2px 0 rgba(0,0,0,0.05)';
 const ellipsis: CSSProperties = { fontWeight: 400, fontSize: 14, lineHeight: '20px', color: '#171717', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' };
+
+/** Down arrow of the header selects; darkens when its select is hovered (see .header-select). */
+function SelectChevron() {
+  return (
+    <span className="select-chevron" style={{ display: 'flex', flexShrink: 0 }}>
+      <Icon icon="LucideChevronDown-s" size={14} />
+    </span>
+  );
+}
 
 function ContactPill({ iconName, text }: { iconName: string; text: string }) {
   return (
@@ -47,6 +58,12 @@ function BrandButton({ label, iconName, background, color = '#FFFFFF', outline }
 }
 
 export function CustomerHeader() {
+  const [addressId, setAddressId] = useState(ADDRESSES[0].id);
+  const [addressOpen, setAddressOpen] = useState(false);
+  // Choice inside the open modal; applied only on "Запази".
+  const [draft, setDraft] = useState<number | null>(addressId);
+  const address = ADDRESSES.find((a) => a.id === addressId)?.label ?? '';
+
   return (
     <section
       aria-label="Клиент"
@@ -65,11 +82,9 @@ export function CustomerHeader() {
     >
       <div style={{ height: 108, display: 'flex', flexDirection: 'column', gap: 12, justifyContent: 'center', alignItems: 'flex-start' }}>
         <nav aria-label="Път" style={{ height: 20, display: 'flex', flexDirection: 'row', gap: 6, alignItems: 'center' }}>
-          <span style={{ ...crumb, color: '#737373', cursor: 'pointer' }}>Level</span>
+          <span style={{ ...crumb, color: '#737373', cursor: 'pointer' }}>Нова offline поръчка</span>
           <span style={{ ...crumb, color: '#A3A3A3' }}>/</span>
-          <span style={{ ...crumb, color: '#737373', cursor: 'pointer' }}>Level</span>
-          <span style={{ ...crumb, color: '#A3A3A3' }}>/</span>
-          <span style={{ ...crumb, color: '#171717' }}>Level</span>
+          <span aria-current="page" style={{ ...crumb, color: '#171717' }}>{CUSTOMER.name}</span>
         </nav>
 
         <div style={{ height: 76, alignSelf: 'stretch', display: 'flex', flexDirection: 'column', gap: 8, justifyContent: 'center', alignItems: 'flex-start' }}>
@@ -114,22 +129,37 @@ export function CustomerHeader() {
           </div>
 
           <div style={{ height: 32, display: 'flex', flexDirection: 'row', gap: 6, alignItems: 'flex-end' }}>
-            <div style={{ width: 342, height: 32, borderRadius: 8, background: '#FFFFFF', boxShadow: control, display: 'flex', flexDirection: 'row', gap: 4, padding: '6px 8px 6px 6px', alignItems: 'center', cursor: 'pointer' }}>
+            <button
+              type="button"
+              className="header-select"
+              aria-haspopup="dialog"
+              aria-label={`Адрес за доставка: ${address}`}
+              onClick={() => {
+                setDraft(addressId);
+                setAddressOpen(true);
+              }}
+              style={{ appearance: 'none', border: 'none', font: 'inherit', textAlign: 'left', width: 342, height: 32, borderRadius: 8, background: '#FFFFFF', boxShadow: control, display: 'flex', flexDirection: 'row', gap: 4, padding: '6px 8px 6px 6px', alignItems: 'center', cursor: 'pointer' }}
+            >
               <div style={{ height: 20, borderRadius: 6, background: '#E6F3E8', display: 'flex', alignItems: 'center', padding: '0 6px', flexShrink: 0 }}>
                 <span style={{ fontWeight: 500, fontSize: 12, lineHeight: '16px', color: '#006612', whiteSpace: 'nowrap' }}>До адрес</span>
               </div>
               <div style={{ display: 'flex', padding: '0 2px', alignItems: 'center', flexGrow: 1, minWidth: 0 }}>
-                <span style={ellipsis}>{CUSTOMER.address}</span>
+                <span style={ellipsis}>{address}</span>
               </div>
-              <img src={icon('LucideChevronDown-s')} alt="" style={{ width: 14, height: 14, flexShrink: 0 }} />
-            </div>
-            <div style={{ width: 172, height: 32, borderRadius: 8, background: '#FFFFFF', boxShadow: control, display: 'flex', flexDirection: 'row', gap: 4, padding: '6px 8px', alignItems: 'center', cursor: 'pointer' }}>
+              <SelectChevron />
+            </button>
+            <button
+              type="button"
+              className="header-select"
+              aria-label={`Ресторант: ${CUSTOMER.restaurant}`}
+              style={{ appearance: 'none', border: 'none', font: 'inherit', textAlign: 'left', width: 172, height: 32, borderRadius: 8, background: '#FFFFFF', boxShadow: control, display: 'flex', flexDirection: 'row', gap: 4, padding: '6px 8px', alignItems: 'center', cursor: 'pointer' }}
+            >
               <img src={icon('HappySymbol-r')} alt="" style={{ width: 18, height: 18, flexShrink: 0 }} />
               <div style={{ display: 'flex', padding: '0 2px', alignItems: 'center', flexGrow: 1, minWidth: 0 }}>
                 <span style={ellipsis}>{CUSTOMER.restaurant}</span>
               </div>
-              <img src={icon('LucideChevronDown-s')} alt="" style={{ width: 14, height: 14, flexShrink: 0 }} />
-            </div>
+              <SelectChevron />
+            </button>
             <div style={{ width: 177, height: 32, borderRadius: 8, background: '#E6F3E8', display: 'flex', flexDirection: 'row', gap: 4, padding: '6px 8px', alignItems: 'center' }}>
               <img src={icon('LucideClock4-gd')} alt="" style={{ width: 18, height: 18, flexShrink: 0 }} />
               <span style={{ display: 'flex', padding: '0 2px', fontWeight: 400, fontSize: 14, lineHeight: '20px', color: '#015410', whiteSpace: 'nowrap' }}>{CUSTOMER.deliveryEta}</span>
@@ -137,6 +167,17 @@ export function CustomerHeader() {
           </div>
         </div>
       </div>
+      {addressOpen ? (
+        <AddressModal
+          addresses={ADDRESSES}
+          selected={draft}
+          onSelect={setDraft}
+          onSave={() => {
+            if (draft != null) setAddressId(draft);
+          }}
+          onClose={() => setAddressOpen(false)}
+        />
+      ) : null}
     </section>
   );
 }

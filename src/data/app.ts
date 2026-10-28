@@ -17,10 +17,16 @@ export const CUSTOMER = {
   status: 'Online user',
   phone: '0888333320',
   email: 'alex_ivanov@gmail.com',
-  address: 'гр. София, ул. Св. Иван Рилски 46',
   restaurant: 'Happy Виктория',
   deliveryEta: '40 мин за доставка',
 };
+
+/** The customer's saved delivery addresses; the first is selected by default. */
+export const ADDRESSES = [
+  { id: 1, label: 'гр. София, ул. Свети Иван Рилски 46' },
+  { id: 2, label: 'гр. София, район Център-Югозапад, бул. Македония №31,' },
+  { id: 3, label: 'гр. Варна, район ж.к. Възраждане 3, бл. 55, вх. 2, ет. 7, ап. 70' },
+];
 
 export const ORDER_ID = '#1381';
 export const DELIVERY_FEE = 2;

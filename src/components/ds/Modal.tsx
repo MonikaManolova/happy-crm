@@ -1,12 +1,16 @@
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { IconButton } from './IconButton';
 
 /* Happy design system — Modal (components/overlays/Modal.jsx), rendered on a
-   dimmed backdrop. Esc and a backdrop click both call `onClose`. */
+   dimmed backdrop. It fades and rises in on mount. The X, Esc and a backdrop
+   click play the exit animation and then call `onClose`, so the parent
+   unmounts it afterwards; a footer render function gets the same `close`. */
 
 /** Dim layer behind overlays (Modal, SidePanel). */
 export const BACKDROP = 'rgba(23, 23, 23, 0.5)';
+
+const ANIM_MS = 200;
 
 export function Modal({
   title,
@@ -19,22 +23,39 @@ export function Modal({
   title: string;
   subtitle?: string;
   onClose: () => void;
-  footer?: ReactNode;
+  footer?: ReactNode | ((close: () => void) => ReactNode);
   children?: ReactNode;
   width?: number;
 }) {
+  const [shown, setShown] = useState(false);
+  const closing = useRef(false);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => requestAnimationFrame(() => setShown(true)));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  const close = () => {
+    if (closing.current) return;
+    closing.current = true;
+    setShown(false);
+    setTimeout(onClose, ANIM_MS);
+  };
+  const closeRef = useRef(close);
+  closeRef.current = close;
+
   useEffect(() => {
     const esc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') closeRef.current();
     };
     document.addEventListener('keydown', esc);
     return () => document.removeEventListener('keydown', esc);
-  }, [onClose]);
+  }, []);
 
   // Portalled to <body> so no ancestor's stacking context (e.g. the app bar) can cover it.
   return createPortal(
     <div
-      onClick={onClose}
+      onClick={close}
       style={{
         position: 'fixed',
         inset: 0,
@@ -44,15 +65,22 @@ export function Modal({
         alignItems: 'center',
         justifyContent: 'center',
         padding: 40,
+        opacity: shown ? 1 : 0,
+        transition: `opacity ${ANIM_MS}ms ease-out`,
+        pointerEvents: shown ? 'auto' : 'none',
       }}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-label={title}
+        className="modal-dialog"
         onClick={(e) => e.stopPropagation()}
         style={{
           width,
+          opacity: shown ? 1 : 0,
+          transform: shown ? 'translateY(0) scale(1)' : 'translateY(8px) scale(0.98)',
+          transition: `transform ${ANIM_MS}ms ease-out, opacity ${ANIM_MS}ms ease-out`,
           borderRadius: 'var(--rounded-xl)',
           background: 'var(--white)',
           boxShadow: 'inset 0 0 0 1px #DDE4EE',
@@ -76,7 +104,7 @@ export function Modal({
                 {title}
               </span>
             </div>
-            <IconButton icon="LucideX-a3" onClick={onClose} tooltip="Затвори" style={{ flexShrink: 0 }} />
+            <IconButton icon="LucideX-a3" onClick={close} tooltip="Затвори" style={{ flexShrink: 0 }} />
           </div>
           {subtitle ? (
             <div style={{ padding: '2px 10px 2px 0', display: 'flex', alignItems: 'center', alignSelf: 'stretch' }}>
@@ -121,7 +149,7 @@ export function Modal({
               alignSelf: 'stretch',
             }}
           >
-            {footer}
+            {typeof footer === 'function' ? footer(close) : footer}
           </div>
         ) : null}
       </div>

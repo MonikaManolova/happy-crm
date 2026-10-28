@@ -14,8 +14,17 @@ import { OrderInfoCard } from './OrderInfoCard';
 const muted = { fontWeight: 400, fontSize: 14, lineHeight: '20px', color: 'var(--grey-600)' } as const;
 
 /** "Свържи към поръчка": link the new order to one of the customer's active orders. */
-export function LinkOrderPanel({ onLink, onClose }: { onLink: (orderId: string) => void; onClose: () => void }) {
-  const [selected, setSelected] = useState<string | null>(null);
+export function LinkOrderPanel({
+  linked,
+  onLink,
+  onClose,
+}: {
+  /** The currently linked order, pre-selected when the panel opens. */
+  linked: string | null;
+  onLink: (orderId: string) => void;
+  onClose: () => void;
+}) {
+  const [selected, setSelected] = useState<string | null>(linked);
   const [query, setQuery] = useState('');
   const n = ACTIVE_ORDERS.length;
 

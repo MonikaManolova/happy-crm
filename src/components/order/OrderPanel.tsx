@@ -5,7 +5,8 @@ import { productsTotal, type CartLine } from '../../lib/cart';
 import { orderTotals, promoPercent } from '../../lib/pricing';
 import { Button } from '../ds/Button';
 import { Dropdown } from '../ds/Dropdown';
-import { WarningMessage } from '../ds/Message';
+import { IconButton } from '../ds/IconButton';
+import { Message } from '../ds/Message';
 import { CartRow } from './CartRow';
 import { Collapse } from './Collapse';
 import { InvoiceModal, type Invoice } from './InvoiceModal';
@@ -71,7 +72,6 @@ export function OrderPanel({ cart, notes, onNote, onBump, onEdit, onSubmit }: Or
   const saveInvoice = () => {
     const it = invoices.find((x) => x.id === invoiceSel);
     setInvoice(it ? it.label.split(',')[0] : null);
-    setInvoiceOpen(false);
   };
 
   return (
@@ -124,7 +124,17 @@ export function OrderPanel({ cart, notes, onNote, onBump, onEdit, onSubmit }: Or
             </button>
             <div style={{ width: 1, height: 16, background: 'var(--grey-400)' }} />
             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 'var(--space-1)' }}>
-              <Button type="outline" size="medium" iconOnly icon="LucidePackagePlus" tooltip="Свържи към поръчка" aria-pressed={!!linkedOrder} onClick={() => setLinkOpen(true)} />
+              {linkedOrder ? (
+                // Linked: the button shows the order number, with an X to unlink (Figma 974:9014).
+                <div style={{ display: 'flex', alignItems: 'center', borderRadius: 'var(--rounded-lg)', background: 'var(--grey-100)' }}>
+                  <Button type="outline" size="medium" icon="LucidePackagePlus" tooltip="Свържи към поръчка" onClick={() => setLinkOpen(true)}>
+                    {linkedOrder}
+                  </Button>
+                  <IconButton size="medium" icon={icon('LucideX-g5')} tooltip="Премахни" aria-label="Премахни свързаната поръчка" onClick={() => setLinkedOrder(null)} />
+                </div>
+              ) : (
+                <Button type="outline" size="medium" iconOnly icon="LucidePackagePlus" tooltip="Свържи към поръчка" onClick={() => setLinkOpen(true)} />
+              )}
               <div ref={moreRef} style={{ position: 'relative', display: 'flex' }}>
                 <Button type="outline" size="medium" iconOnly icon="LucideEllipsis" tooltip="Още действия" aria-expanded={moreOpen} onClick={() => setMoreOpen((v) => !v)} />
                 {moreOpen ? (
@@ -140,7 +150,7 @@ export function OrderPanel({ cart, notes, onNote, onBump, onEdit, onSubmit }: Or
 
       <Collapse open={belowMin} duration={200} fade style={{ flexShrink: 0 }}>
         <div style={{ padding: '2px 16px 8px 16px' }}>
-          <WarningMessage title={`Минимална сума от ${MIN_ORDER} €. Добавете още артикули.`} />
+          <Message type="warning" title={`Минимална сума от ${MIN_ORDER} €. Добавете още артикули.`} dismissible={false} />
         </div>
       </Collapse>
 
@@ -188,7 +198,7 @@ export function OrderPanel({ cart, notes, onNote, onBump, onEdit, onSubmit }: Or
         </div>
       )}
 
-      {linkOpen ? <LinkOrderPanel onLink={setLinkedOrder} onClose={() => setLinkOpen(false)} /> : null}
+      {linkOpen ? <LinkOrderPanel linked={linkedOrder} onLink={setLinkedOrder} onClose={() => setLinkOpen(false)} /> : null}
 
       {invoiceOpen ? (
         <InvoiceModal
