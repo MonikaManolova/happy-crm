@@ -25,22 +25,49 @@ export interface MenuColumnProps {
   onDetails: (dish: Dish) => void;
   onRemoveOne: (dishId: number) => void;
   showRibbons?: boolean;
+  /** Box the filters and dishes in one card, filters as its header (Figma 997:19213). */
+  contained?: boolean;
 }
 
 export function MenuColumn(props: MenuColumnProps) {
-  const { query, category, subcategory, cart, picks, showRibbons = true } = props;
+  const { query, category, subcategory, cart, picks, showRibbons = true, contained = false } = props;
+  const sectionBg = contained ? 'var(--grey-50)' : '#F5F5F5';
   const q = query.trim().toLowerCase();
   const dishes = DISHES.filter((d) => !q || d.title.toLowerCase().includes(q));
 
   return (
-    <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 20, flexGrow: 1, alignSelf: 'stretch', minWidth: 0, minHeight: 0 }}>
+    <div
+      style={{
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: contained ? 0 : 20,
+        flexGrow: 1,
+        alignSelf: 'stretch',
+        minWidth: 0,
+        minHeight: 0,
+        ...(contained
+          ? {
+              marginBottom: 16,
+              borderRadius: 12,
+              border: '1px solid var(--grey-200)',
+              background: sectionBg,
+              boxShadow: '0 2px 6px 0 rgba(0,0,0,0.04)',
+              overflow: 'hidden',
+            }
+          : null),
+      }}
+    >
       <div
         style={{
+          // Contained: keep the filters' shadow above the sticky category header.
+          ...(contained ? { position: 'relative' as const, zIndex: 51 } : null),
           flexShrink: 0,
           alignSelf: 'stretch',
-          borderRadius: 12,
+          borderRadius: contained ? '12px 12px 0 0' : 12,
           background: '#FFFFFF',
-          boxShadow: 'inset 0 0 0 1px #E5E5E5,0 2px 6px 0 rgba(0,0,0,0.04)',
+          boxShadow: contained ? '0 2px 3px 0 rgba(0,0,0,0.04)' : 'inset 0 0 0 1px #E5E5E5,0 2px 6px 0 rgba(0,0,0,0.04)',
+          borderBottom: contained ? '1px solid var(--grey-200)' : undefined,
           display: 'flex',
           flexDirection: 'column',
           gap: 10,
@@ -111,8 +138,8 @@ export function MenuColumn(props: MenuColumnProps) {
               zIndex: 50,
               padding: '10px 4px var(--space-3) 4px',
               marginTop: -2,
-              boxShadow: '0 -4px 0 #F5F5F5',
-              background: 'linear-gradient(180deg, #F5F5F5 45%, rgba(245, 245, 245, .9) 100%)',
+              boxShadow: `0 -4px 0 ${sectionBg}`,
+              background: contained ? 'linear-gradient(180deg, #FAFAFA 45%, rgba(250, 250, 250, .9) 100%)' : 'linear-gradient(180deg, #F5F5F5 45%, rgba(245, 245, 245, .9) 100%)',
               display: 'flex',
               flexDirection: 'row',
               gap: 16,

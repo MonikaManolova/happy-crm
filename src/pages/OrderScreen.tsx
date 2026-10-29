@@ -21,16 +21,19 @@ const pruneNotes = (notes: Notes, cart: CartLine[]): Notes =>
  * The order-taking screen: menu, customer header and order panel. NewOrder and
  * EditOrder both render it; `seed` is the order it starts with, `navAction`
  * fills the top bar's slot next to "Admin" and `leftPanel` sits left of the menu.
+ * `compact` boxes the menu in a card and tightens its gap to the order panel (EditOrder).
  */
 export function OrderScreen({
   navAction,
   seed = NEW_ORDER,
   leftPanel,
+  compact = false,
 }: {
   navAction?: ReactNode;
   seed?: OrderSeed;
   /** Panel to the left of the menu, below the customer header (EditOrder's control panel). */
   leftPanel?: ReactNode;
+  compact?: boolean;
 }) {
   const [nav, setNav] = useState(1);
   const [query, setQuery] = useState('');
@@ -96,8 +99,9 @@ export function OrderScreen({
             <CustomerHeader header={seed.header} />
             <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, alignSelf: 'stretch', minHeight: 0 }}>
               {leftPanel}
-              <div style={{ position: 'relative', display: 'flex', flexDirection: 'row', gap: 16, padding: '16px 16px 0 16px', flexGrow: 1, minWidth: 0, minHeight: 0 }}>
+              <div style={{ position: 'relative', display: 'flex', flexDirection: 'row', gap: compact ? 12 : 16, padding: '16px 16px 0 16px', flexGrow: 1, minWidth: 0, minHeight: 0 }}>
                 <MenuColumn
+                  contained={compact}
                   query={query}
                   onQuery={setQuery}
                   category={category}

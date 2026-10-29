@@ -12,6 +12,7 @@ export function EditOrderPage() {
     <OrderScreen
       seed={EXISTING_ORDER}
       leftPanel={<ControlPanel />}
+      compact
       navAction={<TextButton onClick={() => navigate(ROUTES.newOrder)}>Нова поръчка</TextButton>}
     />
   );
