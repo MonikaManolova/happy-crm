@@ -39,7 +39,6 @@ export const PAYMENT_METHODS = ['В брой', 'С карта (pay link)', 'Ми
 export const DEFAULT_PAYMENT = 'В брой';
 
 export const DELIVERY_SLOTS = ['17:00 ч.', '17:30 ч.', '18:00 ч.', '18:30 ч.', '19:00 ч.', '19:30 ч.', '20:00 ч.'];
-export const DELIVERY_DATES = ['23.09.2026', '24.09.2026', '25.09.2026', '26.09.2026', '27.09.2026'];
 
 export const DEFAULT_INVOICES = [
   { id: 1, label: 'Хоризонт ООД, ЕИК: 208340001' },

@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { icon as iconUrl } from '../../lib/assets';
 import type { ControlSize } from './Button';
 import { Field, fieldVisual, textControl } from './Field';
@@ -149,6 +150,8 @@ export interface SelectProps {
   onSelect?: (label: string, index: number) => void;
   /** Local extension: 'top' opens the menu above the trigger. */
   menuPlacement?: 'top' | 'bottom';
+  /** Local extension: renders a custom panel (e.g. a calendar) instead of the options list. */
+  menu?: (close: () => void) => ReactNode;
   onOpenChange?: (open: boolean) => void;
   style?: CSSProperties;
 }
@@ -164,6 +167,7 @@ export function Select({
   searchPlaceholder,
   onSelect,
   menuPlacement = 'bottom',
+  menu,
   onOpenChange,
   style,
 }: SelectProps) {
@@ -177,24 +181,42 @@ export function Select({
     mounted.current = true;
   }, [open]);
   const wrapRef = useRef<HTMLDivElement>(null);
-  const hasMenu = !!options && options.length > 0;
+  const panelRef = useRef<HTMLDivElement>(null);
+  const hasMenu = !!menu || (!!options && options.length > 0);
   const resolved = disabled ? 'disabled' : open ? 'focused' : hover ? 'hover' : 'default';
   const s = SELECT_SIZES[size];
   const filled = value != null && value !== '';
+  const menuPos: CSSProperties =
+    menuPlacement === 'top'
+      ? { position: 'absolute', bottom: 'calc(100% + var(--space-1))', left: 0, zIndex: 20 }
+      : { position: 'absolute', top: 'calc(100% + var(--space-1))', left: 0, zIndex: 20 };
+  /* A custom panel is portalled with fixed positioning so scrolling containers can't clip it. */
+  const rect = open && menu && wrapRef.current ? wrapRef.current.getBoundingClientRect() : null;
+  const panelPos: CSSProperties | null = rect
+    ? menuPlacement === 'top'
+      ? { position: 'fixed', bottom: window.innerHeight - rect.top + 4, left: rect.left, zIndex: 10000 }
+      : { position: 'fixed', top: rect.bottom + 4, left: rect.left, zIndex: 10000 }
+    : null;
 
   useEffect(() => {
     if (!open) return undefined;
     const away = (e: MouseEvent) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
+      const t = e.target as Node;
+      if (wrapRef.current && !wrapRef.current.contains(t) && !panelRef.current?.contains(t)) setOpen(false);
+    };
+    const scroll = (e: Event) => {
+      if (panelRef.current && !panelRef.current.contains(e.target as Node)) setOpen(false);
     };
     const esc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false);
     };
     document.addEventListener('mousedown', away);
     document.addEventListener('keydown', esc);
+    document.addEventListener('scroll', scroll, true);
     return () => {
       document.removeEventListener('mousedown', away);
       document.removeEventListener('keydown', esc);
+      document.removeEventListener('scroll', scroll, true);
     };
   }, [open]);
 
@@ -203,7 +225,7 @@ export function Select({
       <div ref={wrapRef} style={{ position: 'relative', alignSelf: 'stretch', display: 'flex', flexDirection: 'column' }}>
         <div
           role="button"
-          aria-haspopup="listbox"
+          aria-haspopup={menu ? 'dialog' : 'listbox'}
           aria-expanded={open}
           tabIndex={disabled ? -1 : 0}
           onClick={disabled ? undefined : () => hasMenu && setOpen((o) => !o)}
@@ -266,17 +288,20 @@ export function Select({
             <path d="m6 9 6 6 6-6"></path>
           </svg>
         </div>
-        {hasMenu && open ? (
+        {menu && panelPos ? (
+          createPortal(
+            <div ref={panelRef} data-popover="" style={panelPos}>
+              {menu(() => setOpen(false))}
+            </div>,
+            document.body,
+          )
+        ) : hasMenu && options && open ? (
           <Dropdown
             items={options}
             search={search}
             searchPlaceholder={searchPlaceholder}
             width="100%"
-            style={
-              menuPlacement === 'top'
-                ? { position: 'absolute', bottom: 'calc(100% + var(--space-1))', left: 0, zIndex: 20 }
-                : { position: 'absolute', top: 'calc(100% + var(--space-1))', left: 0, zIndex: 20 }
-            }
+            style={menuPos}
             onSelect={(l, i) => {
               setOpen(false);
               onSelect?.(l, i);

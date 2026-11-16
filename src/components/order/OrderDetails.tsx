@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { DELIVERY_DATES, DELIVERY_SLOTS, DEFAULT_PAYMENT, PAYMENT_METHODS } from '../../data/app';
+import { DELIVERY_SLOTS, DEFAULT_PAYMENT, PAYMENT_METHODS } from '../../data/app';
 import { icon } from '../../lib/assets';
 import { Button } from '../ds/Button';
 import { Chip } from '../ds/Chip';
+import { DatePicker } from '../ds/DatePicker';
 import { Select } from '../ds/Dropdown';
 import { IconButton } from '../ds/IconButton';
 import { Input } from '../ds/Input';
@@ -155,6 +156,8 @@ export function OrderDetails({ value, onChange, invoice, onOpenInvoice, onRemove
     if (!openKey) return undefined;
     const away = (e: MouseEvent) => {
       const el = refs.current[openKey];
+      // Portalled popovers (e.g. the date picker) sit outside the section but belong to it.
+      if ((e.target as Element).closest?.('[data-popover]')) return;
       if (el && !el.contains(e.target as Node)) setOpenKey(null);
     };
     document.addEventListener('mousedown', away);
@@ -251,12 +254,10 @@ export function OrderDetails({ value, onChange, invoice, onOpenInvoice, onRemove
         </div>
         {timeDraft.day === 'Друга дата' ? (
           <div style={{ padding: '0 var(--space-3) var(--space-2) var(--space-3)' }}>
-            <Select
+            <DatePicker
               size="medium"
               value={timeDraft.date}
               placeholder="Избери дата"
-              options={DELIVERY_DATES}
-              search={false}
               menuPlacement="top"
               onSelect={(date) => setTimeDraft({ ...timeDraft, date })}
             />
