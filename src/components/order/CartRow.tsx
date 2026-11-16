@@ -11,7 +11,7 @@ import { Collapse } from './Collapse';
 import { CheckIcon, NotepadIcon, XIcon } from './icons';
 
 const label: CSSProperties = { fontWeight: 500, fontSize: 14, lineHeight: '20px', color: '#171717', flexShrink: 0 };
-const detail: CSSProperties = { fontWeight: 400, fontSize: 14, lineHeight: '20px', color: '#737373', minWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' };
+const detail: CSSProperties = { fontWeight: 400, fontSize: 14, lineHeight: '20px', color: '#737373', minWidth: 0, overflowWrap: 'anywhere' };
 
 /** Lower-cases a Cyrillic option so it reads naturally after the title. */
 const lc = (o: string) => (/^[А-Яа-я]/.test(o) ? o.charAt(0).toLowerCase() + o.slice(1) : o);
@@ -60,19 +60,19 @@ export function CartRow({ line, last, note, onNote, onBump, onEdit }: CartRowPro
         <span style={{ fontWeight: 600, fontSize: 16, lineHeight: '24px', color: '#018017', whiteSpace: 'nowrap' }}>{eur(lineTotal(line))}</span>
       </div>
       {line.removed.length ? (
-        <div style={{ display: 'flex', flexDirection: 'row', gap: 6, alignItems: 'center', marginTop: -2, minWidth: 0 }}>
-          <XIcon size={16} strokeWidth={2.4} style={{ color: '#C2410C' }} />
-          <span style={label}>Без:</span>
-          <span style={detail} title={line.removed.map(stripPrice).join(', ')}>
+        <div style={{ display: 'flex', flexDirection: 'row', gap: 6, alignItems: 'flex-start', marginTop: -2, minWidth: 0 }}>
+          <XIcon size={16} strokeWidth={2.4} style={{ color: '#C2410C', flexShrink: 0, marginTop: 2 }} />
+          <span style={detail}>
+            <span style={label}>Без:</span>{' '}
             {line.removed.map(stripPrice).join(', ')}
           </span>
         </div>
       ) : null}
       {line.addons.length ? (
-        <div style={{ display: 'flex', flexDirection: 'row', gap: 6, alignItems: 'center', marginTop: -2, minWidth: 0 }}>
-          <CheckIcon size={16} strokeWidth={2.4} style={{ color: '#018017' }} />
-          <span style={label}>Добавки:</span>
-          <span style={detail} title={line.addons.map(stripPrice).join(', ')}>
+        <div style={{ display: 'flex', flexDirection: 'row', gap: 6, alignItems: 'flex-start', marginTop: -2, minWidth: 0 }}>
+          <CheckIcon size={16} strokeWidth={2.4} style={{ color: '#018017', flexShrink: 0, marginTop: 2 }} />
+          <span style={detail}>
+            <span style={label}>Добавки:</span>{' '}
             {line.addons.map(stripPrice).join(', ')}
           </span>
         </div>
@@ -94,7 +94,7 @@ export function CartRow({ line, last, note, onNote, onBump, onEdit }: CartRowPro
               display: 'flex',
               flexDirection: 'row',
               gap: 6,
-              alignItems: 'center',
+              alignItems: 'flex-start',
               alignSelf: 'flex-start',
               maxWidth: 'calc(100% + 8px)',
               margin: '-2px -4px 0 -4px',
@@ -104,9 +104,9 @@ export function CartRow({ line, last, note, onNote, onBump, onEdit }: CartRowPro
               cursor: 'pointer',
             }}
           >
-            <NotepadIcon size={16} style={{ color: '#018017' }} />
-            <span style={label}>Бележка:</span>
-            <span style={detail} title={note}>
+            <NotepadIcon size={16} style={{ color: '#018017', flexShrink: 0, marginTop: 2 }} />
+            <span style={detail}>
+              <span style={label}>Бележка:</span>{' '}
               {note}
             </span>
           </button>
