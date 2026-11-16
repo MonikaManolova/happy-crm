@@ -17,17 +17,19 @@ const tipStyle: CSSProperties = {
   boxShadow: 'var(--shadow-popover)',
 };
 
-/** Dark tooltip above or below `rect` (centred on it or right-aligned to it), or to its right. */
+/** Dark tooltip above or below `rect` (centred on it or right-aligned to it), or to its right. `wrap` lets long text break onto several lines. */
 export function Tooltip({
   rect,
   text,
   align,
   side = 'top',
+  wrap = false,
 }: {
   rect: DOMRect;
   text: string;
   align: 'center' | 'end';
   side?: 'top' | 'bottom' | 'right';
+  wrap?: boolean;
 }) {
   const x = align === 'center' ? { left: rect.left + rect.width / 2, tx: '-50%' } : { left: rect.right, tx: '-100%' };
   const pos: CSSProperties =
@@ -37,7 +39,7 @@ export function Tooltip({
         ? { top: rect.top - 6, left: x.left, transform: `translate(${x.tx}, -100%)` }
         : { top: rect.bottom + 6, left: x.left, transform: `translate(${x.tx}, 0)` };
   return createPortal(
-    <span role="tooltip" style={{ ...tipStyle, ...pos }}>
+    <span role="tooltip" style={{ ...tipStyle, ...(wrap ? { whiteSpace: 'normal', width: 'max-content', maxWidth: 240, textAlign: 'center' } : null), ...pos }}>
       {text}
     </span>,
     document.body,

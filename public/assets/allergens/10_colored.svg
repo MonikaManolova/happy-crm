@@ -1,0 +1,14 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="18" cy="9" r="3" fill="#E9C07B"/>
+<ellipse cx="12" cy="6" rx="3" ry="3" transform="rotate(-180 12 6)" fill="#E1AC51"/>
+<circle cx="6" cy="10" r="3" fill="#E9C07B"/>
+<circle cx="7" cy="18" r="3" fill="#E1AC51"/>
+<ellipse cx="17" cy="18" rx="3" ry="3" transform="rotate(180 17 18)" fill="#E9C07B"/>
+<circle cx="12.2915" cy="13.2914" r="3.14168" transform="rotate(-150 12.2915 13.2914)" fill="#E1AC51"/>
+<circle cx="18.6642" cy="9.66521" r="0.523613" fill="#A77F3B"/>
+<circle cx="11.619" cy="5.61799" r="0.523613" transform="rotate(-180 11.619 5.61799)" fill="#A77F3B"/>
+<circle cx="6.33423" cy="10.8569" r="0.523613" transform="rotate(30 6.33423 10.8569)" fill="#A77F3B"/>
+<circle cx="7.78387" cy="18.5123" r="0.523613" transform="rotate(-15 7.78387 18.5123)" fill="#A77F3B"/>
+<circle cx="16.949" cy="17.4263" r="0.523613" transform="rotate(-150 16.949 17.4263)" fill="#A77F3B"/>
+<circle cx="12.1013" cy="12.5762" r="0.523613" transform="rotate(-150 12.1013 12.5762)" fill="#A77F3B"/>
+</svg>
