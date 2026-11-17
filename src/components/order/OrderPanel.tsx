@@ -48,6 +48,7 @@ export function OrderPanel({
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
   const [details, setDetails] = useState<OrderDetailsValue>(initialDetails);
+  const [fee, setFee] = useState(DELIVERY_FEE);
   const [voucher, setVoucher] = useState(false);
   const [promo, setPromo] = useState<string | null>(initialPromo);
   const [invoiceOpen, setInvoiceOpen] = useState(false);
@@ -81,7 +82,7 @@ export function OrderPanel({
   }, [hasItems]);
 
   const products = productsTotal(cart);
-  const totals = orderTotals(products, DELIVERY_FEE, voucher ? VOUCHER_AMOUNT : 0, promoPercent(promo, DEFAULT_PROMO_PERCENT));
+  const totals = orderTotals(products, fee, voucher ? VOUCHER_AMOUNT : 0, promoPercent(promo, DEFAULT_PROMO_PERCENT));
   const belowMin = minOn && cart.length > 0 && products < MIN_ORDER;
 
   const saveInvoice = () => {
@@ -142,7 +143,7 @@ export function OrderPanel({
               {linkedOrder ? (
                 // Linked: the button shows the order number, with an X to unlink (Figma 974:9014).
                 <div style={{ display: 'flex', alignItems: 'center', borderRadius: 'var(--rounded-lg)', background: 'var(--grey-100)' }}>
-                  <Button type="outline" size="medium" icon="LucidePackagePlus" onClick={() => setLinkOpen(true)}>
+                  <Button type="outline" size="medium" icon="LucidePackagePlus" tooltip="Свързана поръчка" tooltipPlacement="top" onClick={() => setLinkOpen(true)}>
                     {linkedOrder}
                   </Button>
                   <IconButton size="medium" icon={icon('LucideX-g5')} tooltip="Премахни" aria-label="Премахни свързаната поръчка" onClick={() => setLinkedOrder(null)} />
@@ -202,8 +203,9 @@ export function OrderPanel({
               invoice={invoice}
               onOpenInvoice={() => setInvoiceOpen(true)}
               onRemoveInvoice={() => setInvoice(null)}
+              total={totals.total}
             />
-            <Totals totals={totals} voucherApplied={voucher} onVoucher={setVoucher} promo={promo} onPromo={setPromo} />
+            <Totals totals={totals} onFee={setFee} voucherApplied={voucher} onVoucher={setVoucher} promo={promo} onPromo={setPromo} />
             <div style={{ padding: '0 16px 16px 16px' }}>
               <Button type="solid" size="large" icon="LucideCheck" disabled={belowMin} onClick={onSubmit} style={{ width: '100%' }}>
                 Изпрати поръчката
@@ -224,6 +226,14 @@ export function OrderPanel({
             setInvoices((list) => list.filter((x) => x.id !== id));
             if (invoiceSel === id) setInvoiceSel(null);
           }}
+          onAdd={(company) => {
+            const id = Math.max(0, ...invoices.map((x) => x.id)) + 1;
+            setInvoices((list) => [...list, { id, label: `${company.name}, ЕИК: ${company.eik}`, company }]);
+            setInvoiceSel(id);
+          }}
+          onUpdate={(id, company) =>
+            setInvoices((list) => list.map((x) => (x.id === id ? { ...x, label: `${company.name}, ЕИК: ${company.eik}`, company } : x)))
+          }
           onSave={saveInvoice}
           onClose={() => setInvoiceOpen(false)}
         />

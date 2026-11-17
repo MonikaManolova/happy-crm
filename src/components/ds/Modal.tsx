@@ -5,7 +5,8 @@ import { IconButton } from './IconButton';
 /* Happy design system — Modal (components/overlays/Modal.jsx), rendered on a
    dimmed backdrop. It fades and rises in on mount. The X, Esc and a backdrop
    click play the exit animation and then call `onClose`, so the parent
-   unmounts it afterwards; a footer render function gets the same `close`. */
+   unmounts it afterwards; a footer render function gets the same `close`.
+   `onBack` adds a back button before the title, for a modal's second step. */
 
 /** Dim layer behind overlays (Modal, SidePanel). */
 export const BACKDROP = 'rgba(23, 23, 23, 0.5)';
@@ -15,6 +16,7 @@ const ANIM_MS = 200;
 export function Modal({
   title,
   subtitle,
+  onBack,
   onClose,
   footer,
   children,
@@ -22,6 +24,7 @@ export function Modal({
 }: {
   title: string;
   subtitle?: string;
+  onBack?: () => void;
   onClose: () => void;
   footer?: ReactNode | ((close: () => void) => ReactNode);
   children?: ReactNode;
@@ -91,6 +94,7 @@ export function Modal({
       >
         <div style={{ padding: '16px 14px 16px 20px', display: 'flex', flexDirection: 'column', gap: 'var(--space-1)', alignSelf: 'stretch' }}>
           <div style={{ height: 32, display: 'flex', flexDirection: 'row', gap: 'var(--space-1-5)', alignItems: 'flex-start', alignSelf: 'stretch' }}>
+            {onBack ? <IconButton icon="LucideChevronLeft" onClick={onBack} tooltip="Назад" style={{ flexShrink: 0 }} /> : null}
             <div style={{ flexGrow: 1, minWidth: 0, display: 'flex', alignItems: 'center', padding: '2px 0' }}>
               <span
                 style={{

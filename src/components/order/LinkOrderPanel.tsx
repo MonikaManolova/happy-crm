@@ -93,8 +93,8 @@ export function LinkOrderPanel({
         <Input
           size="large"
           icon={icon('LucideSearch-a3')}
-          placeholder="Търси поръчки по тел. номер"
-          aria-label="Търси поръчки по телефонен номер"
+          placeholder="Търси по телефон или номер на поръчка"
+          aria-label="Търси по телефон или номер на поръчка"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />

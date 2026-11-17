@@ -3,7 +3,7 @@ import type { ControlSize } from './Button';
 import { Field, fieldVisual, textControl } from './Field';
 
 /* Happy design system — Input (components/forms/Input.jsx). `icon` is an
-   asset URL. */
+   asset URL; `suffix` is a unit shown after the value (Figma 913:4914). */
 
 const SIZES: Record<ControlSize, { height: number; padding: string }> = {
   small: { height: 28, padding: 'var(--space-1) var(--space-1-5)' },
@@ -15,12 +15,14 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
   label?: string;
   error?: string;
   icon?: string;
+  /** Static text after the value, e.g. a unit (`%`, `€`). */
+  suffix?: string;
   size?: ControlSize;
   style?: CSSProperties;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
-  { label, error, icon, placeholder = 'Placeholder', size = 'medium', disabled, style, onFocus, onBlur, ...rest },
+  { label, error, icon, suffix, placeholder = 'Placeholder', size = 'medium', disabled, style, onFocus, onBlur, ...rest },
   ref,
 ) {
   const [hover, setHover] = useState(false);
@@ -73,6 +75,20 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           }}
           {...rest}
         />
+        {suffix ? (
+          <span
+            style={{
+              ...textControl,
+              flexGrow: 0,
+              flexShrink: 0,
+              whiteSpace: 'nowrap',
+              textAlign: 'right',
+              color: disabled ? 'var(--grey-400)' : 'var(--grey-500)',
+            }}
+          >
+            {suffix}
+          </span>
+        ) : null}
       </div>
     </Field>
   );

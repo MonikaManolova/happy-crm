@@ -41,8 +41,8 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
   icon?: string;
   trailingIcon?: string;
   tooltip?: string;
-  /** Tooltip above the button, right-aligned (default), or to its right. */
-  tooltipPlacement?: 'top-end' | 'right';
+  /** Tooltip above the button, right-aligned (default) or centred, or to its right. */
+  tooltipPlacement?: 'top-end' | 'top' | 'right';
   children?: ReactNode;
 }
 
@@ -116,7 +116,7 @@ export function Button({
   return (
     <span ref={wrapRef} style={{ position: 'relative', display: 'inline-flex' }}>
       {btn}
-      {rect ? <Tooltip rect={rect} text={tooltip} align="end" side={tooltipPlacement === 'right' ? 'right' : 'top'} /> : null}
+      {rect ? <Tooltip rect={rect} text={tooltip} align={tooltipPlacement === 'top' ? 'center' : 'end'} side={tooltipPlacement === 'right' ? 'right' : 'top'} /> : null}
     </span>
   );
 }

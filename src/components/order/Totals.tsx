@@ -1,7 +1,9 @@
 import { useState, type CSSProperties } from 'react';
+import { DELIVERY_FEE } from '../../data/app';
 import { icon } from '../../lib/assets';
 import { eur, type Totals as TotalsValue } from '../../lib/pricing';
 import { Button } from '../ds/Button';
+import { IconButton } from '../ds/IconButton';
 import { Input } from '../ds/Input';
 import { TagIcon, TicketIcon, XIcon } from './icons';
 
@@ -23,15 +25,60 @@ function RemoveChip({ onClick, label }: { onClick: () => void; label: string }) 
   );
 }
 
+/* Delivery fee (Figma 1202:15772): the amount with a pencil button; editing swaps it for a
+   small Input with a remove button, which drops the custom fee and restores the default. */
+function FeeField({ fee, onChange }: { fee: number; onChange: (fee: number) => void }) {
+  const [draft, setDraft] = useState<string | null>(null);
+  if (draft == null) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 'var(--space-1-5)' }}>
+        <IconButton size="small" icon={icon('LucidePencil')} tooltip="Промени доставка" onClick={() => setDraft(fee.toFixed(2).replace('.', ','))} />
+        <span style={value}>{eur(fee)}</span>
+      </div>
+    );
+  }
+  return (
+    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', background: 'var(--grey-100)', borderRadius: 'var(--rounded-lg)' }}>
+      <Input
+        size="small"
+        autoFocus
+        aria-label="Цена за доставка"
+        inputMode="decimal"
+        placeholder=""
+        suffix="€"
+        style={{ width: 62 }}
+        value={draft}
+        onFocus={(e) => e.target.select()}
+        onChange={(e) => {
+          const next = e.target.value.replace(/[^\d.,]/g, '');
+          setDraft(next);
+          const n = Number(next.replace(',', '.'));
+          if (next && Number.isFinite(n)) onChange(Math.round(n * 100) / 100);
+        }}
+      />
+      <IconButton
+        size="small"
+        icon={icon('LucideX-g5')}
+        tooltip="Премахни"
+        onClick={() => {
+          setDraft(null);
+          onChange(DELIVERY_FEE);
+        }}
+      />
+    </div>
+  );
+}
+
 export interface TotalsProps {
   totals: TotalsValue;
+  onFee: (fee: number) => void;
   voucherApplied: boolean;
   onVoucher: (on: boolean) => void;
   promo: string | null;
   onPromo: (code: string | null) => void;
 }
 
-export function Totals({ totals, voucherApplied, onVoucher, promo, onPromo }: TotalsProps) {
+export function Totals({ totals, onFee, voucherApplied, onVoucher, promo, onPromo }: TotalsProps) {
   const [promoOpen, setPromoOpen] = useState(false);
   const [code, setCode] = useState('');
   const savePromo = () => {
@@ -90,7 +137,7 @@ export function Totals({ totals, voucherApplied, onVoucher, promo, onPromo }: To
       </div>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
         <span style={{ ...muted, flexGrow: 1 }}>Цена за доставка</span>
-        <span style={value}>{eur(totals.fee)}</span>
+        <FeeField fee={totals.fee} onChange={onFee} />
       </div>
       {voucherApplied ? (
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8 }}>

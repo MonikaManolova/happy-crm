@@ -37,12 +37,14 @@ export const DEFAULT_PROMO_PERCENT = 10;
 
 export const PAYMENT_METHODS = ['В брой', 'С карта (pay link)', 'Микросметка'];
 export const DEFAULT_PAYMENT = 'В брой';
+export const MICRO_ACCOUNT = 'Микросметка';
+/** The customer's available balance in their микросметка, in euro. */
+export const MICRO_BALANCE = 15;
 
-export const DELIVERY_SLOTS = ['17:00 ч.', '17:30 ч.', '18:00 ч.', '18:30 ч.', '19:00 ч.', '19:30 ч.', '20:00 ч.'];
 
 export const DEFAULT_INVOICES = [
-  { id: 1, label: 'Хоризонт ООД, ЕИК: 208340001' },
-  { id: 2, label: 'Бозмов ЕООД, ЕИК: 893000123' },
+  { id: 1, label: 'Хоризонт ООД, ЕИК: 208340001', company: { name: 'Хоризонт ООД', eik: '208340001', vat: '', address: '', mol: '' } },
+  { id: 2, label: 'Бозмов ЕООД, ЕИК: 893000123', company: { name: 'Бозмов ЕООД', eik: '893000123', vat: '', address: '', mol: '' } },
 ];
 
 export interface ActiveOrder {
